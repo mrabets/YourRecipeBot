@@ -22,7 +22,7 @@ def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
     markup.add('chicken', 'meat', 'fish')
     msg = bot.reply_to(message, """\
-        Hi there, I am YourRecipe bot.
+        Hi there, I am YourRecipe bot. Follow me!
         What's your recipe name?
         """, reply_markup=markup)
     bot.register_next_step_handler(msg, process_name_step)

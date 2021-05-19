@@ -10,8 +10,6 @@ Install the project's dependencies with:
 pip3 install -r requirements.txt
 ```
 
-Give an example
-```
 ## Instructions
 
 - Define **api_key** and grab a key from [Bot Father](https://telegram.me/BotFather).

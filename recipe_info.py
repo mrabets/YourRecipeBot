@@ -6,9 +6,7 @@ import json
 
 # Recipe Search API Documentation https://developer.edamam.com/edamam-docs-recipe-api
 
-api_url = 'https://api.edamam.com/search'
-api_id = '3eba0cf0'
-app_key = '588df720c81ad61b51f639ce40386a14'
+from config import API_URL, API_ID, API_KEY
 
 # JSON file move
 recipe_index = -1
@@ -23,8 +21,8 @@ def write_recipe_info_to_file(recipe_name,
                               time):
     params = {
         'q': recipe_name,
-        'app_id': api_id,
-        'app_key': app_key,
+        'app_id': API_ID,
+        'app_key': API_KEY,
         'diet': diet.lower(),
         'cuisineType': cuisine_type,
         'mealType': meal_type,
@@ -34,7 +32,7 @@ def write_recipe_info_to_file(recipe_name,
     }
     global recipe_index
     recipe_index = -1
-    res = requests.get(api_url, params=params)
+    res = requests.get(API_URL, params=params)
     data = res.json()
 
     with open('data.json', 'w', encoding='utf-8') as json_file:

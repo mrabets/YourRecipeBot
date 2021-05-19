@@ -1,15 +1,12 @@
 import telebot
+
 from telebot import types
-
 from enum_classes import *
-
 from recipe_info import write_recipe_info_to_file
 from recipe_info import get_recipe_url
+from config import ACCESS_TOKEN
 
-API_TOKEN = '1806049656:AAHRH9Bs5HWZTPfGkBnx89_b4l-20s_wxcc'
-# BOT_URL = 'https://yourrecipebot.herokuapp.com/'
-
-bot = telebot.TeleBot(API_TOKEN)
+bot = telebot.TeleBot(ACCESS_TOKEN)
 
 recipe_dict = {}
 

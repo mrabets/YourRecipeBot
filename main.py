@@ -1,9 +1,13 @@
 import telebot
 from telebot import types
-from recipe_info import get_recipe_info
 
-API_TOKEN = '1806049656:AAHZoSu4ObbtCrdnTZ-y8nJVOJvawe_Guhc'
-BOT_URL = 'https://yourrecipebot.herokuapp.com/'
+from enum_classes import *
+
+from recipe_info import write_recipe_info_to_file
+from recipe_info import get_recipe_url
+
+API_TOKEN = '1806049656:AAHRH9Bs5HWZTPfGkBnx89_b4l-20s_wxcc'
+# BOT_URL = 'https://yourrecipebot.herokuapp.com/'
 
 bot = telebot.TeleBot(API_TOKEN)
 
@@ -13,47 +17,86 @@ recipe_dict = {}
 class Recipe:
     def __init__(self, name):
         self.name = name
+        self.diet = None
+        self.cuisine_type = None
+        self.meal_type = None
+        self.dish_type = None
         self.calories = None
-        self.mealType = None
+        self.time = None
 
 
-@bot.message_handler(commands=['help', 'start'])
+@bot.message_handler(commands=['start', 'recipe'])
 def send_welcome(message):
     markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-    markup.add('chicken', 'meat', 'fish')
+    markup.add('Chicken', 'Fish', 'Fruit', 'Vegetables', 'Nuts', 'Dairy')
     msg = bot.reply_to(message, """\
-        Hi there, I am YourRecipe bot. Follow me!
+        Hi! I'm YourRecipeBot. Let's search your ideal recipe. Follow me!
         What's your recipe name?
         """, reply_markup=markup)
-    bot.register_next_step_handler(msg, process_name_step)
+    bot.register_next_step_handler(msg, process_recipe_name_step)
 
 
-def process_name_step(message):
+def process_recipe_name_step(message):
     try:
         chat_id = message.chat.id
         name = message.text
         recipe = Recipe(name)
         recipe_dict[chat_id] = recipe
-        msg = bot.reply_to(message, 'How many calories do you want?')
-        bot.register_next_step_handler(msg, process_calories_step)
+
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+        markup.add(*DietLabels.list())
+        markup.add('Go back')
+        msg = bot.reply_to(message, 'What\'s the diet?',
+                           reply_markup=markup)
+        bot.register_next_step_handler(msg, process_diet_step)
     except Exception as e:
         bot.reply_to(message, 'oooops')
 
 
-def process_calories_step(message):
+def process_diet_step(message):
     try:
         chat_id = message.chat.id
-        calories = message.text
-        if not calories.isdigit():
-            msg = bot.reply_to(message, 'Calories should be a number. How many calories do you want?')
-            bot.register_next_step_handler(msg, process_calories_step)
-            return
         recipe = recipe_dict[chat_id]
-        recipe.calories = calories
+        if message.text == u'Go back':
+            send_welcome(message)
+            return
+        diet = message.text
+        # if diet in [u'Balanced', u'High-protein', u'High-fiber', u'Low-fat', u'Low-sodium']:
+        if diet in DietLabels.list():
+            recipe.diet = diet
+        else:
+            raise Exception("Unknown diet")
+
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
-        markup.add('lunch', 'breakfast', 'dinner')
-        msg = bot.reply_to(message, 'What is your meal type?', reply_markup=markup)
+        markup.add(*CuisineType.list())
+        markup.add('Go back')
+        msg = bot.reply_to(message, 'What\'s the cuisine type?',
+                           reply_markup=markup)
+        bot.register_next_step_handler(msg, process_cuisine_type_step)
+    except Exception as e:
+        bot.reply_to(message, 'oooops')
+
+
+def process_cuisine_type_step(message):
+    try:
+        chat_id = message.chat.id
+        recipe = recipe_dict[chat_id]
+        if message.text == u'Go back':
+            process_recipe_name_step(message)
+            return
+        cuisine_type = message.text
+        if cuisine_type in CuisineType.list():
+            recipe.cuisine_type = cuisine_type
+        else:
+            raise Exception("Unknown cuisine type")
+
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+        markup.add(*MealType.list())
+        markup.add('Go back')
+        msg = bot.reply_to(message, 'What\'s the meal type?',
+                           reply_markup=markup)
         bot.register_next_step_handler(msg, process_meal_type_step)
+
     except Exception as e:
         bot.reply_to(message, 'oooops')
 
@@ -61,26 +104,144 @@ def process_calories_step(message):
 def process_meal_type_step(message):
     try:
         chat_id = message.chat.id
-        mealType = message.text
         recipe = recipe_dict[chat_id]
-        if (mealType == u'lunch') or (mealType == u'breakfast') or (mealType == u'dinner'):
-            recipe.mealType = mealType
+        if message.text == u'Go back':
+            message.text = recipe.diet
+            process_diet_step(message)
+            return
+        mealType = message.text
+        if mealType in MealType.list():
+            recipe.meal_type = mealType
         else:
             raise Exception("Unknown meal type")
-        bot.send_message(chat_id, 'Ok, your recipe: ' + recipe.name + '\n Calories:' + str(recipe.calories) + '\n Meal type:' + recipe.mealType)
-        recipe_url = get_recipe_info(recipe.name, recipe.mealType)['recipe_url']
-        bot.send_message(chat_id, 'Hey! I found something: \n ' + recipe_url)
+
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+        markup.add(*DishType.list())
+        markup.add('Go back')
+        msg = bot.reply_to(message, 'What\'s the dish type?',
+                           reply_markup=markup)
+        bot.register_next_step_handler(msg, process_dish_type_step)
+
+    except Exception as e:
+        bot.reply_to(message, 'I can\'t find suitable recipe! Try /start again with other parameters\n')
+
+
+def process_dish_type_step(message):
+    try:
+        chat_id = message.chat.id
+        recipe = recipe_dict[chat_id]
+        if message.text == u'Go back':
+            message.text = recipe.cuisine_type
+            process_cuisine_type_step(message)
+            return
+        dishType = message.text
+        if dishType in DishType.list():
+            recipe.dish_type = dishType
+        else:
+            raise Exception("Unknown dish type")
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+        markup.add('Go back')
+        msg = bot.reply_to(message, 'How many calories? (kcal)',
+                           reply_markup=markup)
+        bot.register_next_step_handler(msg, process_calories_step)
+
+    except Exception as e:
+        bot.reply_to(message, 'I can\'t find suitable recipe! Try /start again with other parameters\n')
+
+
+def process_calories_step(message):
+    try:
+        chat_id = message.chat.id
+        recipe = recipe_dict[chat_id]
+        if message.text == u'Go back':
+            message.text = recipe.meal_type
+            process_meal_type_step(message)
+            return
+        calories = message.text
+        if not calories.isdigit():
+            msg = bot.reply_to(message, 'Calories should be a number. How many calories do you want?')
+            bot.register_next_step_handler(msg, process_calories_step)
+            return
+        recipe.calories = calories
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
+        markup.add('Go back')
+        msg = bot.reply_to(message, 'How many maximum сooking time? (min)',
+                           reply_markup=markup)
+        bot.register_next_step_handler(msg, process_time_step)
     except Exception as e:
         bot.reply_to(message, 'oooops')
 
 
-# Enable saving next step handlers to file "./.handlers-saves/step.save".
-# Delay=2 means that after any change in next step handlers (e.g. calling register_next_step_handler())
-# saving will hapen after delay 2 seconds.
-bot.enable_save_next_step_handlers(delay=2)
+def process_time_step(message):
+    try:
+        chat_id = message.chat.id
+        recipe = recipe_dict[chat_id]
+        if message.text == u'Go back':
+            message.text = recipe.dish_type
+            process_dish_type_step(message)
+            return
+        time = message.text
+        if not time.isdigit():
+            msg = bot.reply_to(message, 'Time should be a number.')
+            bot.register_next_step_handler(msg, process_time_step)
+            return
+        recipe.time = time
+        bot.send_message(chat_id, f"Ok. Your recipe: "
+                                  f"\nName: {recipe.name}"
+                                  f"\nDiet: {recipe.diet}"
+                                  f"\nCuisine type: {recipe.cuisine_type}"
+                                  f"\nMeal type: {recipe.meal_type}"
+                                  f"\nDish type: {recipe.dish_type}"
+                                  f"\nCalories: {recipe.calories} kcal"
+                                  f"\nTime: {recipe.time} min")
+        write_recipe_info_to_file(
+            recipe_name=recipe.name,
+            diet=recipe.diet,
+            cuisine_type=recipe.cuisine_type,
+            meal_type=recipe.meal_type,
+            dish_type=recipe.dish_type,
+            calories=recipe.calories,
+            time=recipe.time
+        )
+        recipe_url = get_recipe_url()
+        if recipe_url is None:
+            bot.reply_to(message, 'Recipe list is empty!')
+            bot.register_next_step_handler(message, process_finish_step)
+            return
+        bot.send_message(chat_id, 'Hey! I found something: \n ' + recipe_url)
+        markup = types.ReplyKeyboardMarkup(one_time_keyboard=False, resize_keyboard=True)
+        markup.add('Get another', 'Finish', 'Start over')
+        msg = bot.reply_to(message, 'Do you want to get another?', reply_markup=markup)
+        bot.register_next_step_handler(msg, process_another_recipe_step)
+    except Exception as e:
+        bot.reply_to(message, 'oooops')
 
-# Load next_step_handlers from save file (default "./.handlers-saves/step.save")
-# WARNING It will work only if enable_save_next_step_handlers was called!
-bot.load_next_step_handlers()
+
+def process_another_recipe_step(message):
+    try:
+        chat_id = message.chat.id
+        answer = message.text
+        recipe = recipe_dict[chat_id]
+        if answer == u'Get another':
+            recipe_url = get_recipe_url()
+            if recipe_url is None:
+                bot.reply_to(message, 'Recipe list is empty!')
+                bot.register_next_step_handler(message, process_finish_step)
+            else:
+                bot.send_message(chat_id, 'I found something new: \n ' + recipe_url)
+                bot.register_next_step_handler(message, process_another_recipe_step)
+        elif answer == u'Start over':
+            send_welcome(message)
+            return
+        elif answer == u'Finish':
+            bot.register_next_step_handler(message, process_finish_step)
+    except Exception as e:
+        bot.reply_to(message, 'oooops!')
+
+
+def process_finish_step(message):
+    bot.send_message(message.chat.id, 'That\'s all! Thank you for using! Enter /start to repeat \n ',
+                     reply_markup=types.ReplyKeyboardRemove())
+
 
 bot.polling()

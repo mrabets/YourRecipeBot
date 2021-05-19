@@ -31,4 +31,4 @@ Alternatively, you can deploy your own copy of the app using the web-based flow:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

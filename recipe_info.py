@@ -1,15 +1,17 @@
-import requests
-from enum_classes import *
-
-
-import json
-
 # Recipe Search API Documentation https://developer.edamam.com/edamam-docs-recipe-api
+
+import requests
+import json
 
 from config import API_URL, API_ID, API_KEY
 
-# JSON file move
-recipe_index = -1
+
+class Moving(object):
+    recipe_index = 0
+
+    @staticmethod
+    def increment_index():
+        Moving.recipe_index += 1
 
 
 def write_recipe_info_to_file(recipe_name,
@@ -30,8 +32,7 @@ def write_recipe_info_to_file(recipe_name,
         'calories': f'0-{calories}',
         'time': f'0-{time}'
     }
-    global recipe_index
-    recipe_index = -1
+    Moving.recipe_index = 0
     res = requests.get(API_URL, params=params)
     data = res.json()
 
@@ -42,8 +43,7 @@ def write_recipe_info_to_file(recipe_name,
 def get_recipe_url():
     with open('data.json') as json_file:
         data = json.load(json_file)
-    global recipe_index
-    recipe_index += 1
-    if recipe_index >= len(data["hits"]):
+    Moving.increment_index()
+    if Moving.recipe_index >= len(data["hits"]):
         return None
-    return data["hits"][recipe_index]["recipe"]["url"]
+    return data["hits"][Moving.recipe_index]["recipe"]["url"]

@@ -8,14 +8,6 @@ class ExtendedEnum(Enum):
         return list(map(lambda c: c.value, cls))
 
 
-class MealType(ExtendedEnum):
-    Lunch = 'Lunch'
-    Dinner = 'Dinner'
-    Breakfast = 'Breakfast'
-    Snack = 'Snack'
-    Teatime = 'Teatime'
-
-
 class DietLabels(ExtendedEnum):
     Balanced = 'Balanced'
     HighProtein = 'High-protein'
@@ -23,25 +15,6 @@ class DietLabels(ExtendedEnum):
     LowFat = 'Low-fat'
     LowCarb = 'Low-carb'
     LowSodium = 'Low-sodium'
-
-
-class DishType(ExtendedEnum):
-    BiscuitsAndCookies = 'Biscuits and cookies'
-    Bread = 'Bread'
-    Cereals = 'Cereals'
-    CondimentsAndSauces = 'Condiments and sauces'
-    Drinks = 'Drinks'
-    Desserts = 'Desserts'
-    Egg = 'Egg'
-    MainCourse = 'Main course'
-    Omelet = 'Omelet'
-    Pancake = 'Pancake'
-    Preps = 'Preps'
-    Preserve = 'Preserve'
-    Salad = 'Salad'
-    Sandwiches = 'Sandwiches'
-    Soup = 'soup'
-    Starter = 'Starter'
 
 
 class CuisineType(ExtendedEnum):
@@ -63,3 +36,33 @@ class CuisineType(ExtendedEnum):
     Nordic = 'Nordic'
     SouthAmerican = 'South American'
     SouthEastAsian = 'South East Asian'
+
+
+class MealType(ExtendedEnum):
+    Lunch = 'Lunch'
+    Dinner = 'Dinner'
+    Breakfast = 'Breakfast'
+    Snack = 'Snack'
+    Teatime = 'Teatime'
+
+
+class DishType(ExtendedEnum):
+    BiscuitsAndCookies = 'Biscuits and cookies'
+    Bread = 'Bread'
+    Cereals = 'Cereals'
+    CondimentsAndSauces = 'Condiments and sauces'
+    Drinks = 'Drinks'
+    Desserts = 'Desserts'
+    Egg = 'Egg'
+    MainCourse = 'Main course'
+    Omelet = 'Omelet'
+    Pancake = 'Pancake'
+    Preps = 'Preps'
+    Preserve = 'Preserve'
+    Salad = 'Salad'
+    Sandwiches = 'Sandwiches'
+    Soup = 'soup'
+    Starter = 'Starter'
+
+
+

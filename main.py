@@ -1,8 +1,8 @@
 import telebot
+
 from telebot import types
-from enum_classes import *
-from recipe_info import write_recipe_info_to_file
-from recipe_info import get_recipe_url
+from enum_classes import DietLabels, CuisineType, MealType, DishType
+from recipe_info import write_recipe_info_to_file, get_recipe_url
 from config import ACCESS_TOKEN
 
 bot = telebot.TeleBot(ACCESS_TOKEN)
@@ -38,12 +38,10 @@ def process_recipe_name_step(message):
         name = message.text
         recipe = Recipe(name)
         recipe_dict[chat_id] = recipe
-
         markup = types.ReplyKeyboardMarkup(one_time_keyboard=True, resize_keyboard=True)
         markup.add(*DietLabels.list())
         markup.add('Go back')
-        msg = bot.reply_to(message, 'What\'s the diet?',
-                           reply_markup=markup)
+        msg = bot.reply_to(message, 'What\'s the diet?', reply_markup=markup)
         bot.register_next_step_handler(msg, process_diet_step)
     except Exception as e:
         bot.reply_to(message, 'oooops')
@@ -57,7 +55,7 @@ def process_diet_step(message):
             send_welcome(message)
             return
         diet = message.text
-        # if diet in [u'Balanced', u'High-protein', u'High-fiber', u'Low-fat', u'Low-sodium']:
+
         if diet in DietLabels.list():
             recipe.diet = diet
         else:

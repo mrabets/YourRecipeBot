@@ -32,7 +32,7 @@ python main.py
 
 ## Instructions
 
-- Define **api_key** and grab a key from [Bot Father](https://telegram.me/BotFather).
+- Define **ACCESS_TOKEN** and grab a token from [Bot Father](https://telegram.me/BotFather).
 - [Edamam's Recipe Search API](https://developer.edamam.com/edamam-recipe-api) over 2.3 million recipes in English.
 
 ## Built With

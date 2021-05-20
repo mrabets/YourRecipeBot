@@ -1,6 +1,8 @@
-# YourRecipeBot
+# [YourRecipeTodayBot](https://t.me/YourRecipeTodayBot)
 
-YourRecipeBot is a bot that searches for suitable recipes according to your parameters
+![YourRecipeTodayBot](https://i.ibb.co/5T3sTcy/photo-2021-05-20-13-41-31.jpg)
+
+YourRecipeTodayBot is a bot that searches for suitable recipes according to your parameters
 
 ### Installing
 
@@ -47,7 +49,7 @@ Alternatively, you can deploy your own copy of the app using the web-based flow:
 
 ## Live Example
 
-[![YourRecipeBot on Telegram](https://i.ibb.co/F0N2SZs/telegram.png)](https://t.me/YourRecipeTodayBot)
+[![YourRecipeTodayBot on Telegram](https://i.ibb.co/F0N2SZs/telegram.png)](https://t.me/YourRecipeTodayBot)
 
 ## License
 

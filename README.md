@@ -1,6 +1,6 @@
 # [YourRecipeTodayBot](https://t.me/YourRecipeTodayBot)
 
-![YourRecipeTodayBot](https://i.ibb.co/5T3sTcy/photo-2021-05-20-13-41-31.jpg)
+![YourRecipeTodayBot](https://i.ibb.co/VMJswwp/photo-2021-05-20-13-41-31.png)
 
 YourRecipeTodayBot is a bot that searches for suitable recipes according to your parameters
 

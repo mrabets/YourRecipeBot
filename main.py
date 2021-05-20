@@ -1,5 +1,4 @@
 import telebot
-
 from telebot import types
 from enum_classes import *
 from recipe_info import write_recipe_info_to_file

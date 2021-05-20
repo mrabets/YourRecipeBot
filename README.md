@@ -2,11 +2,20 @@
 
 ![YourRecipeTodayBot](https://i.ibb.co/VMJswwp/photo-2021-05-20-13-41-31.png)
 
-YourRecipeTodayBot is a bot that searches for suitable recipes according to your parameters
+* [About](#about)
+* [Setup](#setup)
+* [Run](#run)
+* [Instructions](#instructions)
+* [Built With](#built-with)
+* [Deployment to Production](deployment-to-droduction)
+* [Live Example](#live-example)
+* [License](#license)
 
-### Installing
+## About
 
-Install the project's dependencies with:
+YourRecipeTodayBot is a [Telegram](http://telegram.org) Bot that searches for suitable recipes according to your parameters
+
+## Setup
 
 Install required packages:
 
